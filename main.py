@@ -73,9 +73,38 @@ async def remove(ctx):
         await ctx.send(f'{ctx.author.mention}, you have been removed from the {secret_role} role!')
     else:
         await ctx.send('Role not found.')
+
+ 
+@bot.command()
+async def  dm(ctx):
+    try:
+        await ctx.author.send(f'Hello {ctx.author.mention}, this is a DM from the bot!')
+        await ctx.send(f'{ctx.author.mention}, I have sent you a DM!')
+    except discord.Forbidden:
+        await ctx.send(f'Sorry, {ctx.author.mention}, I cannot send you a DM. Please check your privacy settings.')
         
+@bot.command()
+async def reply(ctx):
+    await ctx.send(f'{ctx.author.mention}, this is a reply to your message!')
+    
+@bot.command()
+async def poll(ctx, *, question):
+    embed = discord.Embed(title="New Poll", description=question)
+    poll_message = await ctx.send(embed=embed)
+    await poll_message.add_reaction("👍")
+    await poll_message.add_reaction("👎")
 
 
+@bot.command()
+@commands.has_rolde(secret_role)
+async def secret(ctx):
+    await ctx.send(f'Welcome to the wyl, {ctx.author.mention}! You have access to this command because you have the {secret_role} role.')
+
+
+@secret.error
+async def secret_error(ctx, error):
+    if isinstance(error, commands.MissingRole):
+      await ctx.send(f'Sorry, {ctx.author.mention}, you do not have the required role to access this command.')
 bot.run(token, log_handler=handler, log_level=logging.DEBUG)
 
 
